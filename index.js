@@ -3,7 +3,7 @@ const cors = require('cors')
 const app = express()
 const port = process.env.PORT || 5000;
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 
@@ -33,7 +33,48 @@ async function run() {
         const database = client.db("review");
         const collectionreview = database.collection("collectionreview");
 
+        app.get('/products', async (req, res) => {
+            const couress = collectionreview.find()
+            const result = await couress.toArray()
+            res.send(result)
+        })
 
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const quary = { _id: new ObjectId(id) }
+            const result = await collectionreview.findOne(quary)
+            res.send(result)
+        })
+
+        app.post('/products', async (req, res) => {
+            const databody = req.body
+            const result = await collectionreview.insertOne(databody)
+            res.send(result)
+        })
+
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const quary = { _id: new ObjectId(id) }
+            const result = await collectionreview.deleteOne(quary)
+            res.send(result)
+        })
+
+        app.put('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const bodydata = req.body
+            const quary = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const datareview = {
+                $set: {
+                    name: bodydata.name,
+                    price: bodydata.price,
+                    quantity: bodydata.quantity,
+                    photo: bodydata.photo
+                }
+            }
+            const result = await collectionreview.updateOne(quary, datareview, options)
+            res.send(result)
+        })
 
 
 
