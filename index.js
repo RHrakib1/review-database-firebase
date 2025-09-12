@@ -33,6 +33,11 @@ async function run() {
         const database = client.db("review");
         const collectionreview = database.collection("collectionreview");
 
+
+        // user server controll and store
+        const databaseserver = client.db("review-server");
+        const servercollection = databaseserver.collection("servercolleciton")
+
         app.get('/products', async (req, res) => {
             const couress = collectionreview.find()
             const result = await couress.toArray()
@@ -73,6 +78,21 @@ async function run() {
                 }
             }
             const result = await collectionreview.updateOne(quary, datareview, options)
+            res.send(result)
+        })
+
+
+        // user store and control hare 
+        app.get('/userserver', async (req, res) => {
+            const quary = servercollection.find()
+            const result = await quary.toArray()
+            res.send(result)
+        })
+
+
+        app.post('/userserver', async (req, res) => {
+            const databody = req.body
+            const result = await servercollection.insertOne(databody)
             res.send(result)
         })
 
